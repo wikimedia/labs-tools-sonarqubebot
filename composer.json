@@ -23,6 +23,9 @@
         "symfony/yaml": "5.0.*"
     },
     "config": {
+		"platform": {
+            "php": "7.2.24"
+        },
         "preferred-install": {
             "*": "dist"
         },
@@ -57,7 +60,7 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "phpcs": "phpcs -p -s"
+        "test": "phpcs -p -s"
     },
     "conflict": {
         "symfony/symfony": "*"
