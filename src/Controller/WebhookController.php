@@ -56,9 +56,10 @@ class WebhookController {
 		}
 		$detailsMessage .= "\n\nReport: " . $analysisJson['branch']['url'];
 		if ( !$passedQualityGate ) {
-			$detailsMessage .= "\n\nThis patch can still be merged. " .
-			   'Please give feedback and report false positives at ' . self::FEEDBACK_URL;
+			$detailsMessage .= "\n\nThis patch can still be merged.";
 		}
+
+		$detailsMessage .= ' Please give feedback and report false positives at ' . self::FEEDBACK_URL;
 		$gerritComment = $successMessage . "\n\n" . $detailsMessage;
 		$client = HttpClient::createForBaseUri( 'https://gerrit.wikimedia.org/', [
 			'auth_basic' => [ $_SERVER['GERRIT_USERNAME'], $_SERVER['GERRIT_HTTP_PASSWORD'] ]
