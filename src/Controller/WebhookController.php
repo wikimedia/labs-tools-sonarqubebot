@@ -65,8 +65,9 @@ class WebhookController {
 			'auth_basic' => [ $_SERVER['GERRIT_USERNAME'], $_SERVER['GERRIT_HTTP_PASSWORD'] ]
 		] );
 		list( $gerritShortId, $gerritRevision ) = explode( '-', $analysisJson['branch']['name'] );
-		$url = '/r/a/changes/' . urlencode( str_replace( '-', '/',
-				$analysisJson['project']['key'] ) ) . '~' . $gerritShortId . '/revisions/' .
+		$gerritProject = $analysisJson['analysis']['gerritProjectName'] ??
+						 str_replace( '-', '/', $analysisJson['project']['key'] );
+		$url = '/r/a/changes/' . urlencode( $gerritProject ) . '~' . $gerritShortId . '/revisions/' .
 			   $gerritRevision . '/review';
 		try {
 			$response = $client->request( 'POST', $url, [
