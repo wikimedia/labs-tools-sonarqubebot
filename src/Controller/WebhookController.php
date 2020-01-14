@@ -40,6 +40,11 @@ class WebhookController {
 			// Skip commenting on master for now.
 			return new Response( 'No comment.' );
 		}
+		$gerritProject = $analysisJson['analysis']['gerritProjectName'];
+		if ( !$gerritProject ) {
+			$logger->error( 'No gerrit project name provided.' );
+			return new Response();
+		}
 		$passedQualityGate = $analysisJson['qualityGate']['status'] === 'OK';
 		$successMessage = $passedQualityGate ?
 			'✔ Quality gate passed!' :
@@ -61,15 +66,12 @@ class WebhookController {
 		if ( !$passedQualityGate ) {
 			$detailsMessage .= "\n\nThis patch can still be merged.";
 		}
-
 		$detailsMessage .= ' Please give feedback and report false positives at ' . self::FEEDBACK_URL;
 		$gerritComment = $successMessage . "\n\n" . $detailsMessage;
 		$client = HttpClient::createForBaseUri( 'https://gerrit.wikimedia.org/', [
 			'auth_basic' => [ $_SERVER['GERRIT_USERNAME'], $_SERVER['GERRIT_HTTP_PASSWORD'] ]
 		] );
 		list( $gerritShortId, $gerritRevision ) = explode( '-', $analysisJson['branch']['name'] );
-		$gerritProject = $analysisJson['properties']['sonar.analysis.gerritProjectName'] ??
-						 str_replace( '-', '/', $analysisJson['project']['key'] );
 		$url = '/r/a/changes/' . urlencode( $gerritProject ) . '~' . $gerritShortId . '/revisions/' .
 			   $gerritRevision . '/review';
 		try {
