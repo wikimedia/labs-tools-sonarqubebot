@@ -68,7 +68,7 @@ class WebhookController {
 			'auth_basic' => [ $_SERVER['GERRIT_USERNAME'], $_SERVER['GERRIT_HTTP_PASSWORD'] ]
 		] );
 		list( $gerritShortId, $gerritRevision ) = explode( '-', $analysisJson['branch']['name'] );
-		$gerritProject = $analysisJson['analysis']['gerritProjectName'] ??
+		$gerritProject = $analysisJson['properties']['sonar.analysis.gerritProjectName'] ??
 						 str_replace( '-', '/', $analysisJson['project']['key'] );
 		$url = '/r/a/changes/' . urlencode( $gerritProject ) . '~' . $gerritShortId . '/revisions/' .
 			   $gerritRevision . '/review';
