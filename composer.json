@@ -72,6 +72,7 @@
         }
     },
     "require-dev": {
-        "mediawiki/mediawiki-codesniffer": "^28.0"
+        "mediawiki/mediawiki-codesniffer": "^28.0",
+        "symfony/test-pack": "^1.0"
     }
 }
