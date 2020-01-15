@@ -49,7 +49,7 @@ class WebhookController {
 			$humanReadableReason = '';
 			$humanReadableMetric = trim( str_replace( 'new', '', str_replace( '_', ' ',
 				$condition['metric'] ) ) );
-			if ( $condition['value'] && $condition['status'] ) {
+			if ( isset( $condition['value'] ) ) {
 				$humanReadableReason = $condition['value'] . ' is ' . strtolower( str_replace( '_',
 						' ', $condition['operator'] ) ) . ' ' . $condition['errorThreshold'];
 			}
