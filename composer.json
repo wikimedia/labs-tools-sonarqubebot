@@ -60,7 +60,10 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "test": "phpcs -p -s"
+        "test": [
+            "phpcs -p -s",
+            "phpunit"
+        ]
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -72,6 +75,7 @@
         }
     },
     "require-dev": {
+        "phpunit/phpunit": "8.4",
         "mediawiki/mediawiki-codesniffer": "^29.0",
         "symfony/test-pack": "^1.0"
     }
