@@ -46,11 +46,14 @@ class WebhookController {
 			'❌ Quality gate failed';
 		$detailsMessage = '';
 		foreach ( $analysisJson['qualityGate']['conditions']  as $condition ) {
+			$humanReadableReason = '';
 			$humanReadableMetric = trim( str_replace( 'new', '', str_replace( '_', ' ',
 				$condition['metric'] ) ) );
-			$humanReadableReason = $condition['value'] . ' is ' . strtolower( str_replace( '_',
-					' ', $condition['operator'] ) ) . ' ' . $condition['errorThreshold'];
-			$detailsMessage .= $condition['status'] === 'OK' ?
+			if ( $condition['value'] && $condition['status'] ) {
+				$humanReadableReason = $condition['value'] . ' is ' . strtolower( str_replace( '_',
+						' ', $condition['operator'] ) ) . ' ' . $condition['errorThreshold'];
+			}
+			$detailsMessage .= ( $condition['status'] === 'OK' || $condition['status'] === 'NO_VALUE' ) ?
 				"\n* ✔ " . $humanReadableMetric :
 				"\n* ❌ " . $humanReadableMetric . ' (' . $humanReadableReason . ')';
 		}
