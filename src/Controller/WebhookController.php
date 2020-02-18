@@ -45,7 +45,6 @@ class WebhookController {
 			return new Response( 'No comment.' );
 		}
 		$gerritProject = $analysisJson['properties']['sonar.analysis.gerritProjectName'];
-		$sonarProjectName = $analysisJson['project']['name'];
 		if ( !$gerritProject ) {
 			$logger->error( 'No gerrit project name provided.' );
 			return new Response();
@@ -92,7 +91,7 @@ class WebhookController {
 			];
 			if ( in_array( $gerritProject, $inlineCommentProjectWhitelist ) ) {
 				$comments = self::getInlineComments(
-					$sonarProjectName,
+					$analysisJson['project']['key'],
 					$analysisJson['branch']['name'],
 					$analysisJson['taskId'],
 					$logger
