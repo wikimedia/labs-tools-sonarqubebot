@@ -156,13 +156,16 @@ class WebhookController {
 					$inlineComment['line'] = $issue['line'];
 				}
 				$inlineComment['message'] = $issue['message'];
-				$inlineComment['url'] = sprintf(
+				$url = sprintf(
 					'%s/project/issues?branch=%s&id=%s&issues=%s&open=%s',
 					self::SONARQUBE_HOST,
 					$branch,
+					$project,
 					$issue['key'],
 					$issue['key']
 				);
+				$inlineComment['url'] = $url;
+				$inlineComment['message'] .= "\n\n" . '<a href="' . $url . '">View details</a>';
 				$inlineComment['robot_id'] = 'sonarqubebot';
 				$inlineComment['robot_run_id'] = $taskId;
 				$inlineComment['properties'] = [ 'rule' => $issue['rule'], 'severity' => $issue['severity'] ];
