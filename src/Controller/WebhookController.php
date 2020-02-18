@@ -40,7 +40,7 @@ class WebhookController {
 			// Skip commenting on master for now.
 			return new Response( 'No comment.' );
 		}
-		$gerritProject = $analysisJson['analysis']['gerritProjectName'];
+		$gerritProject = $analysisJson['properties']['sonar.analysis.gerritProjectName'];
 		if ( !$gerritProject ) {
 			$logger->error( 'No gerrit project name provided.' );
 			return new Response();
