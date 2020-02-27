@@ -97,8 +97,7 @@ class WebhookController {
 					$logger
 				);
 				if ( count( $comments ) ) {
-					// FIXME: We don't use robot_comments for reasons noted in T217008
-					$params['json']['comments'] = $comments;
+					$params['json']['robot_comments'] = $comments;
 				}
 			}
 			$response = $client->request( 'POST', $url,  $params );
