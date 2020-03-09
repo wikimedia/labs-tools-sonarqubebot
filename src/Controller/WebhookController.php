@@ -141,7 +141,8 @@ class WebhookController {
 			}
 			$issues = $responseDecoded['issues'];
 			foreach ( $issues as $issue ) {
-				$filename = explode( ':', $issue['component'] )[1];
+				$component = explode( ':', $issue['component'] );
+				$filename = end( $component );
 				$inlineComment = [];
 				$textRange = $issue['textRange'];
 				if ( $textRange['startLine'] !== $textRange['endLine'] ) {
