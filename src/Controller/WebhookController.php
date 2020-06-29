@@ -31,8 +31,6 @@ class WebhookController {
 			);
 		}
 
-		$inlineCommentProjectWhitelist = explode( '|', $_SERVER['INLINECOMMENTWHITELIST'] ?? [] );
-
 		$hmac = $request->headers->get( 'X-Sonar-Webhook-HMAC-SHA256' );
 		$expected_hmac = hash_hmac( 'sha256', $request->getContent(), $_SERVER['SONARQUBE_HMAC'] );
 		if ( !$hmac || $hmac !== $expected_hmac ) {
@@ -89,16 +87,14 @@ class WebhookController {
 					]
 				]
 			];
-			if ( in_array( $gerritProject, $inlineCommentProjectWhitelist ) ) {
-				$comments = self::getInlineComments(
-					$analysisJson['project']['key'],
-					$analysisJson['branch']['name'],
-					$analysisJson['taskId'],
-					$logger
-				);
-				if ( count( $comments ) ) {
-					$params['json']['robot_comments'] = $comments;
-				}
+			$comments = self::getInlineComments(
+				$analysisJson['project']['key'],
+				$analysisJson['branch']['name'],
+				$analysisJson['taskId'],
+				$logger
+			);
+			if ( count( $comments ) ) {
+				$params['json']['robot_comments'] = $comments;
 			}
 			$response = $client->request( 'POST', $url,  $params );
 			$logger->info( $response->getStatusCode() . ' ' . $response->getContent() );
