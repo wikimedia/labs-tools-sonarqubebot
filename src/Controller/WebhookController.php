@@ -165,7 +165,6 @@ class WebhookController {
 					$issue['key']
 				);
 				$inlineComment['url'] = $url;
-				$inlineComment['message'] .= "\n\n" . 'View details: ' . $url;
 				$inlineComment['robot_id'] = 'sonarqubebot';
 				$inlineComment['robot_run_id'] = $taskId;
 				$inlineComment['properties'] = [ 'rule' => $issue['rule'], 'severity' => $issue['severity'] ];
