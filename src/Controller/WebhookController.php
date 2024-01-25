@@ -61,7 +61,8 @@ class WebhookController {
 						' ', $condition['operator'] ) ) . ' ' . $condition['errorThreshold'];
 			}
 			$detailsMessage .= ( $condition['status'] === 'OK' || $condition['status'] === 'NO_VALUE' ) ?
-				"\n* ✔ " . $humanReadableMetric :
+				"\n* ✔ " . $humanReadableMetric . ( $humanReadableMetric === 'coverage' ?
+					self::getCoverageValues( $analysisJson, $logger ) : '' ) :
 				"\n* ❌ " . $humanReadableMetric . ' (' . $humanReadableReason . ')';
 		}
 		$detailsMessage .= "\n\nReport: " . $analysisJson['branch']['url'];
@@ -170,5 +171,43 @@ class WebhookController {
 			$logger->error( $exception->getMessage() );
 		}
 		return $robotComments;
+	}
+
+	/**
+	 * @param array $analysisJson
+	 * @param LoggerInterface $logger
+	 * @return string
+	 * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+	 * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+	 * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+	 * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+	 */
+	private static function getCoverageValues( array $analysisJson, LoggerInterface $logger )
+	: string {
+		$coverage = '';
+		try {
+			$client = HttpClient::createForBaseUri( self::SONARQUBE_HOST );
+			$key = $analysisJson['project']['key'] ?? '';
+			$branch = $analysisJson['branch']['name'] ?? '';
+			$apiRequest = $client->request( 'GET', '/api/measures/component', [
+				'query' => [
+					'component' => $key,
+					'branch' => $branch,
+					'metricKeys' => 'coverage'
+				]
+			] )->getContent();
+			$apiResponse = json_decode( $apiRequest, true );
+			// Check if json_decode was successful
+			if ( $apiResponse === null && json_last_error() !== JSON_ERROR_NONE ) {
+				return '';
+			}
+			$coverage = isset( $apiResponse['component']['measures'][0]['value'] )
+				? ( $apiResponse['component']['measures'][0]['value'] === '0.0' ? ''
+					: ' (' . $apiResponse['component']['measures'][0]['value'] . '% Estimated after merge)' )
+				: '';
+		} catch ( \Exception $exception ) {
+			$logger->error( $exception->getMessage() );
+		}
+		return $coverage;
 	}
 }
