@@ -47,6 +47,12 @@ class WebhookController {
 			$logger->error( 'No gerrit project name provided.' );
 			return new Response();
 		}
+		$exemptProjectKeys = $_ENV['EXEMPT_REPOSITORIES'] ?? '';
+		if ( $exemptProjectKeys && in_array( $analysisJson['project']['key'],
+				str_getcsv( $exemptProjectKeys ) ) ) {
+			// Skip test group repos.
+			return new Response( 'Test group.' );
+		}
 		$passedQualityGate = $analysisJson['qualityGate']['status'] === 'OK';
 		$successMessage = $passedQualityGate ?
 			'✔ Quality gate passed!' :
